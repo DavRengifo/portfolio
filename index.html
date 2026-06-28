@@ -257,6 +257,23 @@
     footer a { color: var(--muted); }
     footer a:hover { color: var(--accent); }
 
+    /* ── CV SECTION ── */
+    .cv-roles { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 20px; }
+    .cv-role-btn {
+      background: var(--card); border: 1px solid var(--border); color: var(--muted);
+      border-radius: 20px; padding: 8px 18px; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all .18s;
+    }
+    .cv-role-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .cv-role-btn.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 600; }
+    .cv-view-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent); color: #000; font-weight: 600; font-size: 15px;
+      padding: 12px 28px; border-radius: 8px; text-decoration: none; transition: opacity .18s;
+    }
+    .cv-view-btn:hover { opacity: .85; }
+    .cv-hint { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 640px) {
       .hero { padding: 56px 20px 48px; }
@@ -649,6 +666,25 @@
   </div>
 </section>
 
+<!-- ══════════ CV ══════════ -->
+<section id="cv-section">
+  <div class="container">
+    <div class="section-label" data-i18n="cv.label">Résumé</div>
+    <div class="section-title" data-i18n="cv.title">View my CV</div>
+    <p class="cv-hint" data-i18n="cv.hint">Select a role to open the matching CV in the right language.</p>
+    <div class="cv-roles">
+      <button class="cv-role-btn active" onclick="setCvRole('ai',this)" data-i18n="cv.ai">AI Engineer</button>
+      <button class="cv-role-btn" onclick="setCvRole('de',this)" data-i18n="cv.de">Data Engineer</button>
+      <button class="cv-role-btn" onclick="setCvRole('be',this)" data-i18n="cv.be">Backend Dev</button>
+      <button class="cv-role-btn" onclick="setCvRole('fs',this)" data-i18n="cv.fs">Fullstack Dev</button>
+      <button class="cv-role-btn" onclick="setCvRole('emb',this)" data-i18n="cv.emb">Embedded Systems</button>
+    </div>
+    <a id="cv-link" class="cv-view-btn" href="cv/?role=ai&lang=en" target="_blank" rel="noopener">
+      <span data-i18n="cv.view">View CV →</span>
+    </a>
+  </div>
+</section>
+
 <!-- ══════════ FOOTER ══════════ -->
 <footer>
   <div class="container">
@@ -693,6 +729,10 @@
       'p3.f3.title':'Booking Flow','p3.f3.desc':'Reservation creation, tracking, simulated checkout',
       'p3.f4.title':'Redis Cache','p3.f4.desc':'Versioned cache keys · short TTL activities, long TTL filters',
       'skills.label': 'Skills', 'skills.title': 'Technical stack',
+      'cv.label': 'Résumé', 'cv.title': 'View my CV',
+      'cv.hint': 'Select a role to open the matching CV in the right language.',
+      'cv.ai': 'AI Engineer', 'cv.de': 'Data Engineer', 'cv.be': 'Backend Dev',
+      'cv.fs': 'Fullstack Dev', 'cv.emb': 'Embedded Systems', 'cv.view': 'View CV →',
     },
     fr: {
       'hero.tag':       'Ingénieur Logiciel',
@@ -724,6 +764,10 @@
       'p3.f3.title':'Flux de réservation','p3.f3.desc':'Création de bookings, suivi, checkout simulé',
       'p3.f4.title':'Cache Redis','p3.f4.desc':'Clés de cache versionnées · TTL court activités, long filtres',
       'skills.label': 'Compétences', 'skills.title': 'Stack technique',
+      'cv.label': 'Curriculum', 'cv.title': 'Voir mon CV',
+      'cv.hint': 'Choisissez un métier pour ouvrir le CV correspondant dans la bonne langue.',
+      'cv.ai': 'Ingénieur IA', 'cv.de': 'Data Engineer', 'cv.be': 'Développeur Backend',
+      'cv.fs': 'Développeur Fullstack', 'cv.emb': 'Systèmes Embarqués', 'cv.view': 'Voir le CV →',
     },
     es: {
       'hero.tag':       'Ingeniero de Software',
@@ -755,6 +799,10 @@
       'p3.f3.title':'Flujo de reserva','p3.f3.desc':'Creación de reservas, seguimiento, checkout simulado',
       'p3.f4.title':'Caché Redis','p3.f4.desc':'Claves de caché versionadas · TTL corto actividades, largo filtros',
       'skills.label': 'Habilidades', 'skills.title': 'Stack técnico',
+      'cv.label': 'Currículum', 'cv.title': 'Ver mi CV',
+      'cv.hint': 'Elige un perfil para abrir el CV correspondiente en el idioma correcto.',
+      'cv.ai': 'Ingeniero IA', 'cv.de': 'Data Engineer', 'cv.be': 'Desarrollador Backend',
+      'cv.fs': 'Desarrollador Fullstack', 'cv.emb': 'Sistemas Embebidos', 'cv.view': 'Ver CV →',
     }
   }
 
@@ -765,6 +813,18 @@
   }
 
   let currentLang = localStorage.getItem('lang') || 'en'
+  let currentCvRole = 'ai'
+
+  function updateCvLink() {
+    document.getElementById('cv-link').href = `cv/?role=${currentCvRole}&lang=${currentLang}`
+  }
+
+  function setCvRole(role, el) {
+    currentCvRole = role
+    document.querySelectorAll('.cv-role-btn').forEach(b => b.classList.remove('active'))
+    el.classList.add('active')
+    updateCvLink()
+  }
 
   function setLang(lang) {
     currentLang = lang
@@ -787,6 +847,9 @@
     document.querySelectorAll('.lang-btn').forEach(btn => {
       btn.classList.toggle('active', btn.textContent === lang.toUpperCase())
     })
+
+    // Update CV link
+    updateCvLink()
   }
 
   // Init on page load

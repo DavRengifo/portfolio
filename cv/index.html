@@ -879,7 +879,8 @@ body{font-family:'DM Sans',sans-serif;background:#e5e7eb;color:var(--text);font-
 </div>
 
 <script>
-let R='ai', G='en';
+const _p=new URLSearchParams(location.search);
+let R=_p.get('role')||'ai', G=_p.get('lang')||'en';
 const rB=[], lB=[];
 document.querySelectorAll('.btn').forEach(b=>{
   const t=b.onclick?.toString()||'';
@@ -887,6 +888,10 @@ document.querySelectorAll('.btn').forEach(b=>{
   else if(t.includes('setLang'))lB.push(b);
 });
 function hi(arr,el){arr.forEach(b=>b.classList.remove('on'));el.classList.add('on');}
+function syncButtons(){
+  rB.forEach(b=>{const v=b.onclick?.toString().match(/setRole\('(\w+)'/)?.[1];b.classList.toggle('on',v===R);});
+  lB.forEach(b=>{const v=b.onclick?.toString().match(/setLang\('(\w+)'/)?.[1];b.classList.toggle('on',v===G);});
+}
 function show(){
   document.querySelectorAll('.cv-wrapper').forEach(e=>e.classList.remove('active'));
   const el=document.getElementById(`cv-${R}-${G}`);
@@ -894,6 +899,7 @@ function show(){
 }
 function setRole(v,el){R=v;hi(rB,el);show();}
 function setLang(v,el){G=v;hi(lB,el);show();}
+syncButtons();
 show();
 </script>
 </body></html>
